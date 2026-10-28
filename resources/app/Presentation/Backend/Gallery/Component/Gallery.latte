@@ -1,0 +1,97 @@
+{templateType App\Presentation\Backend\Gallery\Component\GalleryTemplate}
+{embed '../../../Accessory/Widget/@offcanvas.latte', offcanvasId: $offcanvasId, size: '100vw'}
+	{block title}{_'Image preview'}{/block}
+	{block body}
+		{snippet offcanvas}
+			<div n:if="$preview" class="h-100 d-flex align-items-center justify-content-center">
+				<img src="{$path}/{$preview}" alt="{$preview}" class="mw-100 mh-100 rounded">
+			</div>
+		{/snippet}
+	{/block}
+{/embed}
+
+{embed '../../../Accessory/Widget/@modal.latte', modalId: $modalId, options: [header: 'danger']}
+	{block title}{_'Confirm delete'}{/block}
+	{block body}
+		{snippet content}
+			<p n:if="$deleteName" class="fw-semibold text-center">
+				<em>
+					{_'Are you sure you want to delete the image?'}
+					<span class="d-block text-danger">{$deleteName}</span>
+				</em>
+			</p>
+		{/snippet}
+	{/block}
+	{block footer}
+		{snippet modal}
+			{embed '../../../Accessory/Widget/@form.latte', name: 'delete', class: 'ajax', defaultClass: false}
+				{import '../../../Accessory/Widget/@dismiss-button.latte'}
+				{block form}
+					{include buttonDismiss, type: 'modal', class: 'btn btn-secondary'}
+					{include submit, name: 'confirm', class: 'btn btn-danger'}
+				{/block}
+			{/embed}
+		{/snippet}
+	{/block}
+{/embed}
+
+<h5 class="border-bottom pb-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+	{_'Gallery'}
+	{* what the copy button of an image copies; the browser remembers the choice (assets/naja/gallery.js) *}
+	<span class="d-flex align-items-center gap-2 fs-6 fw-normal">
+		<span class="small text-body-secondary">{_'Copy as'}</span>
+		<span class="btn-group btn-group-sm" role="group" aria-label="{_'Copy as'}">
+			<input type="radio" class="btn-check" name="gallery-copy-mode" id="{$control->getUniqueId()}-texy" value="texy" autocomplete="off" checked>
+			<label class="btn btn-outline-secondary" for="{$control->getUniqueId()}-texy">Texy</label>
+			<input type="radio" class="btn-check" name="gallery-copy-mode" id="{$control->getUniqueId()}-path" value="path" autocomplete="off">
+			<label class="btn btn-outline-secondary" for="{$control->getUniqueId()}-path">{_'Path'}</label>
+		</span>
+	</span>
+</h5>
+
+{if $uploadSupported}
+	{snippet upload}
+		{embed '../../../Accessory/Widget/@form.latte', name: 'upload', class: 'ajax mb-4', najaHistory: 'off'}
+			{block form}
+				<div class="col-md-9 form-error">
+					{label images, class => 'form-label fw-semibold' /}
+					{input images, class => 'form-control', accept => 'image/jpeg,image/png,image/gif,image/webp'}
+					<div class="form-text">{_'JPEG, PNG, GIF or WebP, at most 8 MB each.'}</div>
+				</div>
+				<div class="col-md-3 align-self-center">
+					{include submit, name: 'upload', class: 'btn btn-primary w-100'}
+				</div>
+			{/block}
+		{/embed}
+	{/snippet}
+{else}
+	<div class="alert alert-warning">{_'Uploading images needs the PHP extension GD.'}</div>
+{/if}
+
+{* the buttons appear over an image when the mouse is on it (assets/naja/gallery.scss); the copy button copies
+   the path of the image or its Texy markup, as chosen above (assets/naja/gallery.js) *}
+{snippet images}
+	<div n:if="$images" class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xl-6 g-3">
+		<div n:foreach="$images as $name" class="col">
+			<figure class="gallery-item ratio ratio-1x1 mb-1 rounded overflow-hidden bg-body-tertiary">
+				<img src="{$path}/{$name}" alt="{$name}" class="object-fit-cover" loading="lazy">
+				<div class="gallery-actions d-flex align-items-center justify-content-center gap-2">
+					<a n:href="preview!, name: $name" class="btn btn-light btn-sm ajax" data-naja-history="off"
+						title="{_'Preview'}" aria-label="{_'Preview'}">
+						<i class="fa-solid fa-magnifying-glass"></i>
+					</a>
+					<button type="button" class="btn btn-light btn-sm" data-gallery-copy="{$path}/{$name}"
+						title="{_'Copy for the content'}" aria-label="{_'Copy for the content'}">
+						<i class="fa-regular fa-copy"></i>
+					</button>
+					<a n:href="delete!, name: $name" class="btn btn-danger btn-sm ajax" data-naja-history="off"
+						title="{_'Delete'}" aria-label="{_'Delete'}">
+						<i class="fa-regular fa-trash-can"></i>
+					</a>
+				</div>
+			</figure>
+			<div class="small text-body-secondary text-truncate" title="{$name}">{$name}</div>
+		</div>
+	</div>
+	<p n:if="!$images" class="text-body-secondary mb-0">{_'The gallery has no images yet.'}</p>
+{/snippet}

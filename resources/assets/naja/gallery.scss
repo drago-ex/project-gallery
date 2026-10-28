@@ -1,0 +1,21 @@
+// the buttons of a gallery image appear when the mouse is over it or a button has the focus
+.gallery-actions {
+	background-color: rgba(0, 0, 0, 0.45);
+	opacity: 0;
+	transition: opacity 0.15s ease-in-out;
+}
+
+.gallery-item:hover .gallery-actions,
+.gallery-item:focus-within .gallery-actions {
+	opacity: 1;
+}
+
+// touch screens have no hover: the buttons are always shown, at the bottom of the image
+@media (hover: none) {
+	.gallery-actions {
+		align-items: flex-end !important;
+		padding-bottom: 0.5rem;
+		background-color: transparent;
+		opacity: 1;
+	}
+}

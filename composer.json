@@ -1,0 +1,60 @@
+{
+	"name": "drago-ex/project-gallery",
+	"description": "Image gallery in the administration of Drago Project, for images in the content of articles and pages.",
+	"type": "drago-tools-resource",
+	"license": "MIT",
+	"require": {
+		"php": ">=8.3 <9",
+		"nette/application": "^3.2",
+		"nette/di": "^3.2",
+		"nette/http": "^3.3",
+		"nette/utils": "^4.0",
+		"drago-ex/application": "^4.0",
+		"drago-ex/component": "^3.0",
+		"drago-ex/form": "^3.0",
+		"drago-ex/project-auth": "^1.0",
+		"drago-ex/project-backend": "^1.0",
+		"drago-ex/translator": "^4.0"
+	},
+	"suggest": {
+		"ext-gd": "Resizes the uploaded images; the Docker image of drago-ex/project-docker has it.",
+		"ext-intl": "Keeps readable file names of uploads with accented letters; the Docker image of drago-ex/project-docker has it.",
+		"drago-ex/permission": "Generates the access rules of the gallery administration (bin/create-gallery-permission).",
+		"drago-ex/project-permission": "Role and permission management in the administration, which registers the generated providers.",
+		"drago-ex/project-backend-ui": "Administration layout; the gallery uses its content widget."
+	},
+	"require-dev": {
+		"nette/tester": "^2.5",
+		"phpstan/phpstan-nette": "^2.0",
+		"drago-ex/project-tools": "^1.0"
+	},
+	"extra": {
+		"drago-tools": {
+			"install": {
+				"copy": {
+					"resources/app/Model": "app/Model",
+					"resources/app/Presentation/Backend": "app/Presentation/Backend",
+					"resources/assets/naja": "assets/naja"
+				}
+			},
+			"commands": [
+				"bin/create-gallery-permission"
+			]
+		},
+		"drago-translator": {
+			"translation": "app/Presentation/Backend/Gallery/Translate"
+		}
+	},
+	"scripts": {
+		"phpstan": "phpstan analyse",
+		"tester": "tester tests -s -C",
+		"post-install-cmd": [
+			"drago-install --dev",
+			"drago-clean"
+		],
+		"post-update-cmd": [
+			"drago-install --dev",
+			"drago-clean"
+		]
+	}
+}
