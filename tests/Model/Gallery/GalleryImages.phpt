@@ -52,4 +52,3 @@ test('only an image of the gallery can be deleted', function () use ($wwwDir, $d
 	Assert::false(is_file("$dir/photo.png"));
 	FileSystem::delete($dir);
 });
-
