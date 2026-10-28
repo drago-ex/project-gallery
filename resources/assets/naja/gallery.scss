@@ -1,3 +1,12 @@
+// the copy mode switch in the heading has the size of the heading buttons of other pages (btn-xs of drago-ex/datagrid),
+// so the heading keeps its height when the pages are switched
+.gallery-copy-mode .btn {
+	--bs-btn-padding-y: 0.15rem;
+	--bs-btn-padding-x: 0.4rem;
+	--bs-btn-font-size: 0.75rem;
+	--bs-btn-border-radius: 0.2rem;
+}
+
 // the buttons of a gallery image appear when the mouse is over it or a button has the focus
 .gallery-actions {
 	background-color: rgba(0, 0, 0, 0.45);

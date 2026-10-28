@@ -35,12 +35,12 @@
 	{/block}
 {/embed}
 
-<h5 class="border-bottom pb-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
-	{_'Gallery'}
+<h5 class="border-bottom pb-2 d-flex align-items-center gap-2">
+	<span class="me-auto">{_'Gallery'}</span>
 	{* what the copy button of an image copies; the browser remembers the choice (assets/naja/gallery.js) *}
 	<span class="d-flex align-items-center gap-2 fs-6 fw-normal">
 		<span class="small text-body-secondary">{_'Copy as'}</span>
-		<span class="btn-group btn-group-sm" role="group" aria-label="{_'Copy as'}">
+		<span class="btn-group gallery-copy-mode" role="group" aria-label="{_'Copy as'}">
 			<input type="radio" class="btn-check" name="gallery-copy-mode" id="{$control->getUniqueId()}-texy" value="texy" autocomplete="off" checked>
 			<label class="btn btn-outline-secondary" for="{$control->getUniqueId()}-texy">Texy</label>
 			<input type="radio" class="btn-check" name="gallery-copy-mode" id="{$control->getUniqueId()}-path" value="path" autocomplete="off">
@@ -53,13 +53,13 @@
 	{snippet upload}
 		{embed '../../../Accessory/Widget/@form.latte', name: 'upload', class: 'ajax mb-4', najaHistory: 'off'}
 			{block form}
-				<div class="col-md-9 form-error">
+				<div class="col-12 form-error">
 					{label images, class => 'form-label fw-semibold' /}
-					{input images, class => 'form-control', accept => 'image/jpeg,image/png,image/gif,image/webp'}
+					<div class="input-group">
+						{input images, class => 'form-control', accept => 'image/jpeg,image/png,image/gif,image/webp'}
+						{include submit, name: 'upload', class: 'btn btn-primary px-4 rounded-end'}
+					</div>
 					<div class="form-text">{_'JPEG, PNG, GIF or WebP, at most 8 MB each.'}</div>
-				</div>
-				<div class="col-md-3 align-self-center">
-					{include submit, name: 'upload', class: 'btn btn-primary w-100'}
 				</div>
 			{/block}
 		{/embed}
