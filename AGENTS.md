@@ -7,7 +7,7 @@ Use this file as package-specific guidance when working in this repository. Keep
 - **Type**: drago-tools-resource
 - **Purpose**: Image gallery in the administration of Drago Project, for images in the content of articles and pages.
 - **PHP**: >=8.3 <9
-- **Runtime dependencies**: nette/application (^3.2), nette/di (^3.2), nette/http (^3.3), nette/utils (^4.0), drago-ex/application (^4.0), drago-ex/component (^3.0), drago-ex/form (^3.0), drago-ex/project-auth (^1.0), drago-ex/project-backend (^1.0), drago-ex/translator (^4.0)
+- **Runtime dependencies**: nette/application (^3.2), nette/di (^3.2), nette/http (^3.3), nette/utils (^4.0), drago-ex/application (^4.0), drago-ex/component (^3.0), drago-ex/form (^3.0), drago-ex/project-auth (^1.0), drago-ex/project-backend (^1.0), drago-ex/translator (^4.0.1)
 - **License**: MIT
 
 ## Repository Layout
