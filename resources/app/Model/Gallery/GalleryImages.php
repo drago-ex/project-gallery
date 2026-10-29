@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Model\Gallery;
 
@@ -11,6 +9,7 @@ use Nette\Utils\Finder;
 use Nette\Utils\Image;
 use Nette\Utils\ImageException;
 use Nette\Utils\Strings;
+use function extension_loaded, is_array;
 
 
 /**

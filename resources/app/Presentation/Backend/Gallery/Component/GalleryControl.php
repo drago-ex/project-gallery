@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Presentation\Backend\Gallery\Component;
 
@@ -113,7 +111,11 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 				->addRule($form::MaxLength, 'At most %d images can be uploaded at once.', self::MaxImages)
 				->addRule($form::Image, 'The image must be JPEG, PNG, GIF or WebP.')
 				->addRule($form::MaxFileSize, 'The image can have at most 8 MB.', self::MaxImageSize)
-				->addRule(GalleryImages::validatePixels(...), 'The image can have at most %d megapixels.', GalleryImages::MaxPixels / 1_000_000);
+				->addRule(
+					GalleryImages::validatePixels(...),
+					'The image can have at most %d megapixels.',
+					GalleryImages::MaxPixels / 1_000_000,
+				);
 		}
 
 		$form->addSubmit('upload', 'Upload');
