@@ -17,7 +17,7 @@ use function extension_loaded, is_array;
  * and pages. An upload is made smaller to fit MaxSize × MaxSize, keeps its format and gets a readable name
  * made from its original one, with a number when the name is taken.
  */
-class GalleryImages
+readonly class GalleryImages
 {
 	/** Web path of the images, relative to the base path. */
 	public const string Path = 'upload/gallery';
@@ -32,7 +32,7 @@ class GalleryImages
 
 
 	public function __construct(
-		private readonly string $wwwDir,
+		private string $wwwDir,
 	) {
 	}
 
