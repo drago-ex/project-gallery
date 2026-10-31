@@ -9,7 +9,7 @@ use Nette\Utils\Finder;
 use Nette\Utils\Image;
 use Nette\Utils\ImageException;
 use Nette\Utils\Strings;
-use function extension_loaded, is_array;
+use function is_array;
 
 
 /**
@@ -95,13 +95,6 @@ readonly class GalleryImages
 	}
 
 
-	/** GD (only suggested by the package) resizes the uploads; without it no image can be uploaded. */
-	public static function isSupported(): bool
-	{
-		return extension_loaded('gd');
-	}
-
-
 	/**
 	 * Form rule: every image has at most MaxPixels, read from its header before it is decoded, so a huge image
 	 * gets a form error instead of exhausting the memory.
@@ -128,9 +121,7 @@ readonly class GalleryImages
 	private function createName(string $untrustedName, string $extension): string
 	{
 		$base = pathinfo($untrustedName, PATHINFO_FILENAME);
-		$base = extension_loaded('intl')
-			? Strings::webalize($base)
-			: trim((string) preg_replace('~[^a-z0-9]+~', '-', strtolower($base)), '-');
+		$base = Strings::webalize($base);
 
 		$base = rtrim(substr($base, 0, 80), '-') ?: 'image';
 		$name = $base . '.' . $extension;

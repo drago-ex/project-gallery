@@ -13,6 +13,8 @@ nebo jen cesta (`/upload/gallery/photo.jpg`); prohlížeč si volbu pamatuje.
 ## Požadavky
 
 - PHP >= 8.3, < 9
+- Rozšíření PHP GD (zmenšování obrázků) a intl (čitelné názvy souborů); Docker image z
+  [drago-ex/project-docker](https://github.com/drago-ex/project-docker) má obě
 - [Drago Project](https://github.com/drago-ex/project)
 
 ## Instalace
@@ -55,8 +57,7 @@ S [drago-ex/project-backend-ui](https://github.com/drago-ex/project-backend-ui) 
 
 Obrázky se ukládají do `www/upload/gallery/`. Nahraný obrázek se zmenší, aby se vešel do 1920 × 1920 px, a dostane
 čitelný název odvozený z původního (`Můj obrázek.JPG` → `muj-obrazek.jpg`), s číslem, když je název obsazený. Najednou
-lze nahrát až 20 obrázků po nejvýše 8 MB. Zmenšování potřebuje rozšíření PHP GD (Docker image
-drago-ex/project-docker ho má); bez něj galerie nahrávání nenabízí.
+lze nahrát až 20 obrázků po nejvýše 8 MB.
 
 Modul používá zdroj oprávnění `Backend:Gallery`. Backend provider povoluje roli administrátora.
 
@@ -100,7 +101,9 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 potom formulář a tlačítko pro smazání obrázku zobrazte jen s povolením:
 
 ```latte
-{if $writeAllowed && $uploadSupported}
+{if $writeAllowed}
+	{snippet upload}…{/snippet}
+{/if}
 ```
 
 ```latte

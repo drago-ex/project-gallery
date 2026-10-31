@@ -50,7 +50,6 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 		$template->modalId = $this->getUniqueIdComponent(self::Modal);
 		$template->path = $this->getPresenter()->getHttpRequest()->getUrl()->getBasePath() . GalleryImages::Path;
 		$template->images = $this->galleryImages->getNames();
-		$template->uploadSupported = GalleryImages::isSupported();
 		$template->preview = $this->preview;
 		$template->deleteName = $this->deleteName;
 		$template->setFile(__DIR__ . '/Gallery.latte');
@@ -104,19 +103,16 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 	{
 		$form = $this->factory->create();
 
-		// the Image rule and the resizing need GD (only suggested); without it the template shows a warning instead
-		if (GalleryImages::isSupported()) {
-			$form->addMultiUpload('images', 'Upload images')
-				->setRequired('Please select the images.')
-				->addRule($form::MaxLength, 'At most %d images can be uploaded at once.', self::MaxImages)
-				->addRule($form::Image, 'The image must be JPEG, PNG, GIF or WebP.')
-				->addRule($form::MaxFileSize, 'The image can have at most 8 MB.', self::MaxImageSize)
-				->addRule(
-					GalleryImages::validatePixels(...),
-					'The image can have at most %d megapixels.',
-					GalleryImages::MaxPixels / 1_000_000,
-				);
-		}
+		$form->addMultiUpload('images', 'Upload images')
+			->setRequired('Please select the images.')
+			->addRule($form::MaxLength, 'At most %d images can be uploaded at once.', self::MaxImages)
+			->addRule($form::Image, 'The image must be JPEG, PNG, GIF or WebP.')
+			->addRule($form::MaxFileSize, 'The image can have at most 8 MB.', self::MaxImageSize)
+			->addRule(
+				GalleryImages::validatePixels(...),
+				'The image can have at most %d megapixels.',
+				GalleryImages::MaxPixels / 1_000_000,
+			);
 
 		$form->addSubmit('upload', 'Upload');
 		$form->onSuccess[] = $this->upload(...);

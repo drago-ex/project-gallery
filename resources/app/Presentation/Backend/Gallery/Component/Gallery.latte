@@ -49,24 +49,20 @@
 	</span>
 </h5>
 
-{if $uploadSupported}
-	{snippet upload}
-		{embed '../../../Accessory/Widget/@form.latte', name: 'upload', class: 'ajax mb-4', najaHistory: 'off'}
-			{block form}
-				<div class="col-12 form-error">
-					{label images, class => 'form-label fw-semibold' /}
-					<div class="input-group">
-						{input images, class => 'form-control', accept => 'image/jpeg,image/png,image/gif,image/webp'}
-						{include submit, name: 'upload', class: 'btn btn-primary px-4 rounded-end'}
-					</div>
-					<div class="form-text">{_'JPEG, PNG, GIF or WebP, at most 8 MB each.'}</div>
+{snippet upload}
+	{embed '../../../Accessory/Widget/@form.latte', name: 'upload', class: 'ajax mb-4', najaHistory: 'off'}
+		{block form}
+			<div class="col-12 form-error">
+				{label images, class => 'form-label fw-semibold' /}
+				<div class="input-group">
+					{input images, class => 'form-control', accept => 'image/jpeg,image/png,image/gif,image/webp'}
+					{include submit, name: 'upload', class: 'btn btn-primary px-4 rounded-end'}
 				</div>
-			{/block}
-		{/embed}
-	{/snippet}
-{else}
-	<div class="alert alert-warning">{_'Uploading images needs the PHP extension GD.'}</div>
-{/if}
+				<div class="form-text">{_'JPEG, PNG, GIF or WebP, at most 8 MB each.'}</div>
+			</div>
+		{/block}
+	{/embed}
+{/snippet}
 
 {* the buttons appear over an image when the mouse is on it (assets/naja/gallery.scss); the copy button copies
    the path of the image or its Texy markup, as chosen above (assets/naja/gallery.js) *}

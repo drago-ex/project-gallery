@@ -15,7 +15,6 @@ class GalleryTemplate extends ExtraTemplate
 
 	/** @var list<string> */
 	public array $images = [];
-	public bool $uploadSupported;
 	public ?string $preview = null;
 	public ?string $deleteName = null;
 }

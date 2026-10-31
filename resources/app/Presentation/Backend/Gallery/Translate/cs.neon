@@ -13,7 +13,6 @@
 "The image must be JPEG, PNG, GIF or WebP.": "Obrázek musí být JPEG, PNG, GIF nebo WebP."
 "The image can have at most 8 MB.": "Obrázek může mít nejvýše 8 MB."
 "The image can have at most %d megapixels.": "Obrázek může mít nejvýše %d megapixelů."
-"Uploading images needs the PHP extension GD.": "Nahrávání obrázků potřebuje rozšíření PHP GD."
 "The gallery has no images yet.": "Galerie zatím nemá žádné obrázky."
 "The images were uploaded.": "Obrázky byly nahrány."
 "Confirm delete": "Potvrzení smazání"

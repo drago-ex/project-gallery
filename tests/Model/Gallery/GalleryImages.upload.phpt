@@ -8,10 +8,6 @@ use Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-if (!GalleryImages::isSupported()) {
-	Tester\Environment::skip('GD is not loaded.');
-}
-
 
 $wwwDir = sys_get_temp_dir() . '/drago-gallery-' . getmypid();
 $dir = $wwwDir . '/' . GalleryImages::Path;
@@ -29,7 +25,7 @@ function upload(string $name, int $width = 10, int $height = 10): FileUpload
 
 test('an upload gets a readable name, numbered when taken, and is made smaller', function () use ($wwwDir, $dir) {
 	$images = new GalleryImages($wwwDir);
-	$expected = extension_loaded('intl') ? 'muj-obrazek.png' : 'm-j-obr-zek.png';
+	$expected = 'muj-obrazek.png';
 	Assert::same($expected, $images->save(upload('Můj obrázek.PNG')));
 	Assert::same(str_replace('.png', '-2.png', $expected), $images->save(upload('Můj obrázek.PNG')));
 	Assert::same('image.png', $images->save(upload('.png')));

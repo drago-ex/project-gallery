@@ -13,6 +13,8 @@ or only the path (`/upload/gallery/photo.jpg`); the browser remembers the choice
 ## Requirements
 
 - PHP >= 8.3, < 9
+- PHP extensions GD (resizing the images) and intl (readable file names); the Docker image of
+  [drago-ex/project-docker](https://github.com/drago-ex/project-docker) has both
 - [Drago Project](https://github.com/drago-ex/project)
 
 ## Installation
@@ -56,8 +58,7 @@ With [drago-ex/project-backend-ui](https://github.com/drago-ex/project-backend-u
 
 Images are saved in `www/upload/gallery/`. An upload is made smaller to fit 1920 × 1920 px and gets a readable name
 made from its original one (`Můj obrázek.JPG` → `muj-obrazek.jpg`), with a number when the name is taken. Up to 20
-images of at most 8 MB can be uploaded at once. Resizing needs the PHP extension GD (the Docker image of
-drago-ex/project-docker has it); without it the gallery offers no upload.
+images of at most 8 MB can be uploaded at once.
 
 The module uses the permission resource `Backend:Gallery`. The backend provider allows the administrator role.
 
@@ -101,7 +102,9 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 then show the form and the delete button of an image only when allowed:
 
 ```latte
-{if $writeAllowed && $uploadSupported}
+{if $writeAllowed}
+	{snippet upload}…{/snippet}
+{/if}
 ```
 
 ```latte
