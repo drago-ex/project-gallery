@@ -1,0 +1,4 @@
+# The gallery administration; administrators are allowed everything (permission).
+security:
+	resources:
+		Backend:Gallery:

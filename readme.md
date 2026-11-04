@@ -30,17 +30,21 @@ as set in `extra.drago-tools` of this package's `composer.json`.
 
 ## Assets
 
-Register the Naja extension, which copies the path or the markup of an image, and include the styles of the buttons in
-`assets/admin.js`:
+Register the Naja extension, which copies the path or the markup of an image, in `assets/admin.js`:
 
 ```js
 import GalleryCopy from './naja/gallery.js';
-import './naja/gallery.scss';
 
 registerNajaExtensions(
 	// ...
 	GalleryCopy
 );
+```
+
+and include the styles of the buttons in `assets/admin.scss`:
+
+```scss
+@import 'naja/gallery';
 ```
 
 The browser allows copying to the clipboard only over HTTPS and on localhost; elsewhere the text is offered
@@ -54,78 +58,20 @@ The gallery is available as:
 {link :Backend:Gallery:}
 ```
 
-With [drago-ex/project-backend-ui](https://github.com/drago-ex/project-backend-ui), add the link to its menu (see its README).
+With [drago-ex/project-backend-ui](https://github.com/drago-ex/project-backend-ui), the page gets its menu item from `Backend/Gallery/7.menu.neon`.
 
 Images are saved in `www/upload/gallery/`. An upload is made smaller to fit 1920 × 1920 px and gets a readable name
 made from its original one (`Můj obrázek.JPG` → `muj-obrazek.jpg`), with a number when the name is taken. Up to 20
 images of at most 8 MB can be uploaded at once.
 
-The module uses the permission resource `Backend:Gallery`. The backend provider allows the administrator role.
+The module uses the permission resource `Backend:Gallery`.
 
----
+## Access rules
 
-## Optional add-ons
+The access rules are in `app/Presentation/Backend/Gallery/acl.neon`: the resource `Backend:Gallery`, for the administrator only.
+[drago-ex/permission](https://github.com/drago-ex/permission) merges them with its base roles, in which the administrator is allowed everything.
 
-The package works without them. Set them up by hand as described below when the project needs them.
-
-### Permissions
-
-The gallery works without permissions and without [drago-ex/permission](https://github.com/drago-ex/permission):
-the administration shows all its buttons.
-
-For static permissions, the access rules are prepared in [`bin/create-gallery-permission`](bin/create-gallery-permission);
-drago-ex/permission generates a provider from it (set up as its README shows):
-
-```bash
-php vendor/bin/drago-commands
-```
-
-To show the upload form and the delete buttons only to roles with the privilege, add the `WriteAccess` trait of
-drago-ex/permission; its `isWriteAllowed()` asks for the `gallery-write` privilege. In
-`app/Presentation/Backend/Gallery/Component/GalleryControl.php` use the trait and pass the result to the template
-(with `public bool $writeAllowed = false;` in `GalleryTemplate`):
-
-```php
-use Drago\Permission\WriteAccess;
-
-class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandle
-{
-	use Component;
-	use WriteAccess;
-
-	public function render(): void
-	{
-		// ...
-		$template->writeAllowed = $this->isWriteAllowed();
-```
-
-then show the form and the delete button of an image only when allowed:
-
-```latte
-{if $writeAllowed}
-	{snippet upload}…{/snippet}
-{/if}
-```
-
-```latte
-<a n:if="$writeAllowed" n:href="delete!, name: $name" …>
-```
-
-Every signal of a component is checked as `gallery-write`, the preview too. To let a role that may only view the
-gallery open the preview, mark it read-only in `GalleryPresenter` (checked as `gallery-read`):
-
-```php
-/** @return list<string> */
-protected function readOnlySignals(): array
-{
-	return ['preview'];
-}
-```
-
-For dynamic permissions set in the administration, install
-[drago-ex/project-permission](https://github.com/drago-ex/project-permission) and import the privileges of the gallery
-into its `resources` table by hand, so roles can be given them:
-
-```bash
-php vendor/bin/migration db:migrate vendor/drago-ex/project-gallery/migrations-permission
-```
+The privileges of the administration (`Backend:Gallery`) are `default` (the page, with the preview of images),
+`upload` and `delete`. The upload form and the delete buttons are shown only to those who may use them. With
+[drago-ex/project-permission](https://github.com/drago-ex/project-permission), roles can be given these privileges
+in its administration, e.g. a role that only views and copies the images with `default`.

@@ -30,16 +30,21 @@ podle nastavení v `extra.drago-tools` v `composer.json` tohoto balíčku.
 
 ## Assety
 
-Zaregistrujte rozšíření Naja, které kopíruje cestu nebo zápis obrázku, a vložte styly tlačítek do `assets/admin.js`:
+Zaregistrujte rozšíření Naja, které kopíruje cestu nebo zápis obrázku, v `assets/admin.js`:
 
 ```js
 import GalleryCopy from './naja/gallery.js';
-import './naja/gallery.scss';
 
 registerNajaExtensions(
 	// ...
 	GalleryCopy
 );
+```
+
+a vložte styly tlačítek do `assets/admin.scss`:
+
+```scss
+@import 'naja/gallery';
 ```
 
 Prohlížeč povoluje kopírování do schránky jen přes HTTPS a na localhostu; jinde se text nabídne v dialogu
@@ -53,78 +58,20 @@ Galerie je dostupná jako:
 {link :Backend:Gallery:}
 ```
 
-S [drago-ex/project-backend-ui](https://github.com/drago-ex/project-backend-ui) přidejte odkaz do jeho menu (viz jeho README).
+S [drago-ex/project-backend-ui](https://github.com/drago-ex/project-backend-ui) dostane stránka položku menu z `Backend/Gallery/7.menu.neon`.
 
 Obrázky se ukládají do `www/upload/gallery/`. Nahraný obrázek se zmenší, aby se vešel do 1920 × 1920 px, a dostane
 čitelný název odvozený z původního (`Můj obrázek.JPG` → `muj-obrazek.jpg`), s číslem, když je název obsazený. Najednou
 lze nahrát až 20 obrázků po nejvýše 8 MB.
 
-Modul používá zdroj oprávnění `Backend:Gallery`. Backend provider povoluje roli administrátora.
+Modul používá zdroj oprávnění `Backend:Gallery`.
 
----
+## Pravidla přístupu
 
-## Volitelné doplňky
+Pravidla přístupu jsou v `app/Presentation/Backend/Gallery/acl.neon`: zdroj `Backend:Gallery` jen pro administrátora.
+[drago-ex/permission](https://github.com/drago-ex/permission) je sloučí se svými výchozími rolemi, ve kterých administrátor smí všechno.
 
-Balíček funguje i bez nich. Nastavte je ručně podle popisu níže, když je projekt potřebuje.
-
-### Oprávnění
-
-Galerie funguje bez oprávnění i bez [drago-ex/permission](https://github.com/drago-ex/permission):
-administrace zobrazí všechna svá tlačítka.
-
-Pro statická oprávnění jsou pravidla přístupu připravená v [`bin/create-gallery-permission`](bin/create-gallery-permission);
-drago-ex/permission z nich vygeneruje provider (nastavení podle jeho README):
-
-```bash
-php vendor/bin/drago-commands
-```
-
-Aby formulář pro nahrávání a tlačítka pro mazání viděly jen role s privilegiem, přidejte trait `WriteAccess`
-z drago-ex/permission; jeho `isWriteAllowed()` se ptá na privilegium `gallery-write`. V
-`app/Presentation/Backend/Gallery/Component/GalleryControl.php` trait použijte a výsledek předejte šabloně
-(s `public bool $writeAllowed = false;` v `GalleryTemplate`):
-
-```php
-use Drago\Permission\WriteAccess;
-
-class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandle
-{
-	use Component;
-	use WriteAccess;
-
-	public function render(): void
-	{
-		// ...
-		$template->writeAllowed = $this->isWriteAllowed();
-```
-
-potom formulář a tlačítko pro smazání obrázku zobrazte jen s povolením:
-
-```latte
-{if $writeAllowed}
-	{snippet upload}…{/snippet}
-{/if}
-```
-
-```latte
-<a n:if="$writeAllowed" n:href="delete!, name: $name" …>
-```
-
-Každý signál komponenty se kontroluje jako `gallery-write`, i náhled. Aby náhled otevřela i role, která galerii smí
-jen prohlížet, označte ho v `GalleryPresenter` jako jen pro čtení (kontroluje se pak `gallery-read`):
-
-```php
-/** @return list<string> */
-protected function readOnlySignals(): array
-{
-	return ['preview'];
-}
-```
-
-Pro dynamická oprávnění nastavovaná v administraci nainstalujte
-[drago-ex/project-permission](https://github.com/drago-ex/project-permission) a ručně naimportujte oprávnění galerie
-do jeho tabulky `resources`, aby je bylo možné přidělit rolím:
-
-```bash
-php vendor/bin/migration db:migrate vendor/drago-ex/project-gallery/migrations-permission
-```
+Privilegia administrace (`Backend:Gallery`) jsou `default` (stránka i s náhledem obrázků), `upload` a `delete`.
+Formulář pro nahrání a tlačítka pro mazání se zobrazí jen těm, kdo je smí použít. S
+[drago-ex/project-permission](https://github.com/drago-ex/project-permission) lze tato privilegia přidělit rolím
+v jeho administraci, např. roli, která obrázky jen prohlíží a kopíruje, jen `default`.

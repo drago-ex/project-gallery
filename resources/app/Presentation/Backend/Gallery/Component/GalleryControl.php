@@ -8,6 +8,8 @@ use Drago\Application\UI\ExtraControl;
 use Drago\Component\Component;
 use Drago\Component\ModalHandle;
 use Drago\Component\OffcanvasHandle;
+use Drago\Permission\Access;
+use Drago\Permission\AccessCheck;
 use Nette\Application\Attributes\Requires;
 use Nette\Application\UI\Form;
 use Nette\Http\FileUpload;
@@ -18,11 +20,13 @@ use Tracy\ILogger;
 /**
  * Images of the gallery: upload, a full-size preview in the offcanvas, deleting after a confirmation in the modal
  * and copying the Texy markup of an image (assets/naja/gallery.js) for the content of articles and pages.
+ * Privileges (resource Backend:Gallery): "upload" (the upload form) and "delete"; the preview needs only the page.
  * @property-read GalleryTemplate $template
  */
 class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandle
 {
 	use Component;
+	use AccessCheck;
 
 	/** Largest uploaded image (8 MB); it is made smaller by GalleryImages. */
 	private const int MaxImageSize = 8 * 1024 * 1024;
@@ -57,6 +61,8 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 	}
 
 
+	/** Only opens the dialog, the page is enough; its form is checked. */
+	#[Access]
 	#[Requires(ajax: true)]
 	public function handleOpenModal(): void
 	{
@@ -65,6 +71,8 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 	}
 
 
+	/** Only opens the offcanvas, the page is enough. */
+	#[Access]
 	#[Requires(ajax: true)]
 	public function handleOpenOffcanvas(): void
 	{
@@ -72,7 +80,8 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 	}
 
 
-	/** Shows the image in its full size in the offcanvas. */
+	/** Shows the image in its full size in the offcanvas; it only reads, the page is enough. */
+	#[Access]
 	#[Requires(ajax: true)]
 	public function handlePreview(string $name): void
 	{

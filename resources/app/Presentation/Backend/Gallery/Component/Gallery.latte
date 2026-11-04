@@ -52,20 +52,23 @@
 	</div>
 </header>
 
-{snippet upload}
-	{embed '../../../Accessory/Widget/@form.latte', name: 'upload', class: 'ajax mb-4', najaHistory: 'off'}
-		{block form}
-			<div class="col-12 form-error">
-				{label images, class => 'form-label fw-semibold' /}
-				<div class="input-group">
-					{input images, class => 'form-control', accept => 'image/jpeg,image/png,image/gif,image/webp'}
-					{include submit, name: 'upload', class: 'btn btn-primary px-4 rounded-end'}
+{* the upload form only for those who may upload; the form is checked by the privilege "upload" anyway *}
+{if $control->isAllowed('upload')}
+	{snippet upload}
+		{embed '../../../Accessory/Widget/@form.latte', name: 'upload', class: 'ajax mb-4', najaHistory: 'off'}
+			{block form}
+				<div class="col-12 form-error">
+					{label images, class => 'form-label fw-semibold' /}
+					<div class="input-group">
+						{input images, class => 'form-control', accept => 'image/jpeg,image/png,image/gif,image/webp'}
+						{include submit, name: 'upload', class: 'btn btn-primary px-4 rounded-end'}
+					</div>
+					<div class="form-text">{_'JPEG, PNG, GIF or WebP, at most 8 MB each.'}</div>
 				</div>
-				<div class="form-text">{_'JPEG, PNG, GIF or WebP, at most 8 MB each.'}</div>
-			</div>
-		{/block}
-	{/embed}
-{/snippet}
+			{/block}
+		{/embed}
+	{/snippet}
+{/if}
 
 {* the buttons appear over an image when the mouse is on it (assets/naja/gallery.scss); the copy button copies
    the path of the image or its Texy markup, as chosen above (assets/naja/gallery.js) *}
@@ -83,7 +86,7 @@
 						title="{_'Copy for the content'}" aria-label="{_'Copy for the content'}">
 						<i class="fa-regular fa-copy"></i>
 					</button>
-					<a n:href="delete!, name: $name" class="btn btn-danger btn-sm ajax" data-naja-history="off"
+					<a n:if="$control->isAllowed('delete')" n:href="delete!, name: $name" class="btn btn-danger btn-sm ajax" data-naja-history="off"
 						title="{_'Delete'}" aria-label="{_'Delete'}">
 						<i class="fa-regular fa-trash-can"></i>
 					</a>

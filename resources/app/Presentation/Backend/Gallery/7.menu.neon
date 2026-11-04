@@ -1,0 +1,6 @@
+# Item of the administration menu of drago-ex/project-backend-ui (without it the parameter is unused; the key lets a later file extend it).
+parameters:
+	sidebar:
+		Content:
+			# images for the content of articles and pages
+			gallery: {title: Gallery, link: 'Gallery:', icon: fa-regular fa-images bell}
