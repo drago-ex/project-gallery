@@ -23,3 +23,7 @@
 "The image could not be deleted.": "Obrázek se nepodařilo smazat."
 "Unknown status code.": "Neznámý stavový kód."
 
+
+# descriptions of the privileges (permissionLabels in acl.neon)
+"Uploading images": "Nahrávání obrázků"
+"Deleting images": "Mazání obrázků"

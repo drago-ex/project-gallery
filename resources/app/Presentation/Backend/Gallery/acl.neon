@@ -1,4 +1,12 @@
 # The gallery administration; administrators are allowed everything (permission).
+parameters:
+	# descriptions for the permissions page of drago-ex/project-permission
+	permissionLabels:
+		Backend:Gallery:
+			upload: Uploading images
+			delete: Deleting images
+
+
 security:
 	resources:
 		Backend:Gallery:

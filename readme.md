@@ -65,3 +65,5 @@ The rules are in `Backend/Gallery/acl.neon` (resource `Backend:Gallery`, the adm
 are `default` (the page with previews), `upload` and `delete`; the upload form and the delete buttons are shown
 only to those who may use them. [Project Permission](https://github.com/drago-ex/project-permission) gives them to
 other roles, e.g. a role that only views and copies images with `default`.
+
+The same file describes the privileges (`permissionLabels`) for the permissions page of [Project Permission](https://github.com/drago-ex/project-permission).
