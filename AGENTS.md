@@ -1,57 +1,41 @@
 # Agent Guide
 
-Use this file as package-specific guidance when working in this repository. Keep changes aligned with the existing public API, project conventions, and supported PHP range.
+`drago-ex/project-gallery` (type drago-tools-resource, PHP >=8.3 <9, requires ext-gd and ext-intl): an image
+gallery in the administration for images in the content of articles (project-blog) and static pages, inserted as
+Texy markup. The workspace rules are in `../AGENTS.md`; dependencies are in `composer.json`.
 
-## Package Overview
-- **Package**: `drago-ex/project-gallery`
-- **Type**: drago-tools-resource
-- **Purpose**: Image gallery in the administration of Drago Project, for images in the content of articles and pages.
-- **PHP**: >=8.3 <9
-- **Runtime dependencies**: nette/application (^3.2), nette/di (^3.2), nette/http (^3.3), nette/utils (^4.0), drago-ex/application (^4.0), drago-ex/component (^3.0), drago-ex/form (^3.0), drago-ex/project-auth (^1.0 || ^2.0), drago-ex/project-backend (^1.0), drago-ex/translator (^4.0.1)
-- **License**: MIT
+## Layout
+- `resources/app/Model/Gallery/GalleryImages.php`: the images on disk.
+- `resources/app/Presentation/Backend/Gallery`: `GalleryPresenter`, `Component/GalleryControl`, `conf.neon`,
+  `7.menu.neon`, `acl.neon`, `Translate/cs.neon`.
+- `resources/assets/naja/gallery.js` + `gallery.scss`: `GalleryCopy` and the button styles, copied to `assets/naja/`.
+- `tests/`: Nette Tester without a database.
 
-## Repository Layout
-- `resources/app/Presentation/Backend/Gallery/acl.neon`: the ACL of the package (resources = presenter names, rules only for roles other than the administrator), merged by Nette with `role.acl.neon` of drago-ex/permission (required); a new presenter gets its resource in the `acl.neon` next to it. No bin script or providers.
-- Privileges for drago-ex/project-permission are read from the code (`PrivilegeCatalog` of drago-ex/permission: pages, `handle*()` signals, forms, `#[Access]`); there is no `migrations-permission/` any more (removed 2026-11-03). A new page or button needs no list update.
-- `resources/`: application resources contributed to the consuming Drago project (`app/Model`, `app/Presentation/Backend`, `assets/naja`).
-- `.github/`: CI workflows; keep their PHP versions and commands consistent with Composer and the package scripts.
-- `composer.json`: package metadata, dependency constraints, autoloading, and available Composer scripts.
+## How it works
+- Files only, no table and no migration. `GalleryImages` lists `www/upload/gallery/` (jpg, jpeg, png, gif, webp;
+  newest first), saves an upload resized to fit 1920 × 1920 (format kept, name by `Strings::webalize()`,
+  `-2`, `-3`… when taken) and deletes only a name `getNames()` lists, so a path in the name never reaches another
+  file. Registered in `conf.neon` with `%appDir%/../www`. Resaving through GD drops GIF animation.
+- The cover image of an article is not part of the gallery: project-blog has its own `ArticleImages`.
+- `TexyFormatter` of drago-ex/texy-toolbar filters only URLs with a scheme, so the relative
+  `[* /upload/gallery/x.jpg *]` passes.
+- `GalleryControl` (one control, no datagrid, no `BaseControl`): the upload form (`addMultiUpload`, at most 20
+  images, 8 MB, `GalleryImages::MaxPixels`, AJAX), the grid (snippet `images`), `preview!` in the full-screen
+  offcanvas, `delete!` opens the confirmation modal whose form posts the name. The buttons over an image show on
+  hover or focus, always on touch screens.
+- `GalleryCopy` has one click listener on the document (snippets need no re-init) and copies `data-gallery-copy`
+  or `[* path *]` by the checked `gallery-copy-mode` radio (stored in localStorage in try/catch), with a
+  `prompt()` fallback outside HTTPS/localhost.
+- Flash messages have gallery-specific texts so they do not clash with the keys of other packages.
 
-## Key Parts
-- Purpose (user, 2026-10-28): images for the content of articles (project-blog) and static pages, inserted as Texy markup. The cover image of an article is not part of it: project-blog keeps its own `ArticleImages` (`www/upload/blog/`).
-- Files only, no database table and no migration (the user's choice): `Model/Gallery/GalleryImages` lists `www/upload/gallery/` (jpg, jpeg, png, gif, webp; newest first by mtime), saves an upload resized to fit 1920 × 1920 with Nette Image (format kept, readable name by `Strings::webalize()` with ext-intl, `-2`, `-3`… when taken) and deletes only a name that `getNames()` lists, so a path in the name can never reach another file. It is registered in `Backend/Gallery/conf.neon` with `%appDir%/../www`, like `ArticleImages` of project-blog. ext-gd and ext-intl are required in composer.json (user, 2026-10-31: the Docker image of project-docker has both, no fallback code without them). Resaving through GD drops the animation of a GIF.
-- `TexyFormatter` of drago-ex/texy-toolbar filters only URLs with a scheme (`https?:`), so the relative `[* /upload/gallery/x.jpg *]` (with the base path) passes. The copy button copies that markup or only the path, as set by the Texy/Path switch in the heading (the user, 2026-10-28; Texy by default, remembered in localStorage `gallery-copy-mode`, read and written in try/catch).
-- `Backend/Gallery/Component/GalleryControl` (one control, no datagrid, so no `BaseControl` like static-page): upload form (`addMultiUpload`, at most 20 images, 8 MB, `GalleryImages::MaxPixels`, sent by Naja as AJAX), the grid of images (snippet `images`), `preview!` shows the image in the full-screen offcanvas, `delete!` opens the confirmation modal whose form posts the name. The three buttons over an image appear on hover or focus (`assets/naja/gallery.scss`; always visible on touch screens); `assets/naja/gallery.js` (`GalleryCopy`, one click listener on the document, so snippets need no re-init) copies `data-gallery-copy` (the path) or `[* path *]` to the clipboard by the checked `gallery-copy-mode` radio, sets the stored mode on load and after a snippet update, with a `prompt()` fallback outside HTTPS/localhost. Both are registered by hand in the project's `admin.js` (README "Assets").
-- Texts are translated in `Backend/Gallery/Translate/cs.neon` (the package owns its translations); flash keys are gallery-specific ("The image was deleted.") so they do not clash with the same keys of other packages.
-- Menu: `Backend/Gallery/7.menu.neon` adds the item "Gallery" to project-backend-ui (user, 2026-11-04, reverses the 2026-10-27 rule that project-preset ships the menu neons): the sidebar parameter is unused without project-backend-ui, which hides items the user may not open.
+## Permissions
+`GalleryControl` uses `AccessCheck`. Privileges of `Backend:Gallery`: `default`; `upload` (the `upload` form,
+snippet `upload` rendered only with `isAllowed('upload')`); `delete` (`handleDelete` and the `delete` form).
+`openModal`, `openOffcanvas`, `preview` need only the page (`#[Access]`). project-permission reads the privileges
+from the code.
 
-## Buttons and permissions
-- Permission code is in the package (2026-11-03, step 6 of the ACL-in-neon rework; before, README steps and project-preset-permission copies): `GalleryControl` uses `AccessCheck` of drago-ex/permission; the upload form (snippet `upload`) is rendered only with `isAllowed('upload')`, the delete button with `isAllowed('delete')`. Privileges of `Backend:Gallery`: `default`; `upload` (the `upload` form, named by itself); `delete` (`handleDelete` opening the dialog + the `delete` form). `#[Access]` (page enough): `openModal`, `openOffcanvas`, `preview`. No `readOnlySignals()` any more.
-
-## Dependencies
-
-Composer constraints describe the package contract. Before changing integration behavior, inspect the source and the actual call sites in this package; do not infer runtime usage solely from dependency declarations.
-Development dependencies include nette/tester (^2.5), phpstan/phpstan-nette (^2.0), drago-ex/project-tools (^1.0).
-
-## Essential Commands
-
+## Commands
 ```bash
-composer tester                 # tester tests -s -C
-composer phpstan                # phpstan analyse
+composer phpstan
+composer tester     # GalleryImages in a temp directory; the upload test needs GD
 ```
-
-## Tests
-
-Nette Tester without a database: `GalleryImages` in a directory under the system temp (listing, deleting only gallery images); `GalleryImages.upload.phpt` (names, numbering, resizing) needs GD, which composer.json requires.
-
-## Installation Hooks
-
-Composer install and update hooks invoke Drago project setup/cleanup commands. Inspect those scripts and their effects before invoking Composer operations that trigger them; they may modify generated project files.
-
-## Conventions & Rules
-
-- Preserve backward compatibility unless the task explicitly permits a breaking change. Check callers and public signatures before changing behavior.
-- Follow the existing PHP style: strict types, explicit parameter and return types, tabs for indentation, and single-quoted strings where practical. Match nearby code when a convention is unclear.
-- Keep package-specific configuration, resources, and migrations in their established directories. Do not edit generated or consuming-project files without confirming they are part of this repository’s intended output.
-- Add or update focused tests for behavioral changes when this package has a runnable test setup. Do not invent test commands; use only the scripts and configuration present here.
-- Update README examples and Composer metadata when a public API or supported requirement changes.
