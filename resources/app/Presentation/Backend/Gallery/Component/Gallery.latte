@@ -1,5 +1,5 @@
 {templateType App\Presentation\Backend\Gallery\Component\GalleryTemplate}
-{embed '../../../Accessory/Widget/@modal.latte', modalId: $modalId, options: [header: 'danger']}
+{embed '../../../Accessory/Widget/@modal.latte', modalId: $modalId, options: [theme: 'danger', confirm: true]}
 	{block title}{_'Confirm delete'}{/block}
 	{block body}
 		{snippet content}
@@ -14,7 +14,7 @@
 			{embed '../../../Accessory/Widget/@form.latte', name: 'delete', class: 'ajax', defaultClass: false}
 				{import '../../../Accessory/Widget/@dismiss-button.latte'}
 				{block form}
-					{include buttonDismiss, type: 'modal', class: 'btn btn-secondary'}
+					{include buttonDismiss, type: 'modal', label: 'Cancel'}
 					{include submit, name: 'confirm', class: 'btn btn-danger'}
 				{/block}
 			{/embed}

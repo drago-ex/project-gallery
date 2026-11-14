@@ -3,4 +3,4 @@ parameters:
 	sidebar:
 		Content:
 			# images for the content of articles and pages
-			gallery: {title: Gallery, link: 'Gallery:', icon: fa-regular fa-images bell}
+			gallery: {title: Gallery, link: 'Gallery:', icon: bi bi-images bell}
