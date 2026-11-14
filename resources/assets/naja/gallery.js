@@ -1,3 +1,5 @@
+import { Lightbox } from 'compostrap/lightbox';
+
 const modeName = 'gallery-copy-mode';
 
 
@@ -5,6 +7,9 @@ const modeName = 'gallery-copy-mode';
  * Copies the path of a gallery image (the data-gallery-copy attribute of its button) to the clipboard, or its
  * Texy markup [* path *], as the switch of the gallery is set; the browser remembers the choice. One listener
  * on the document, so images added by a snippet need no initialization.
+ *
+ * The preview of an image is the lightbox of compostrap (links with data-lightbox); its labels are translated
+ * texts printed on the list of the images (data-lightbox-dialog, -close, -previous, -next).
  */
 export default class GalleryCopy {
 	initialize(naja) {
@@ -13,6 +18,14 @@ export default class GalleryCopy {
 			for (const input of document.querySelectorAll(`[name="${modeName}"]`)) {
 				input.checked = input.value === mode;
 			}
+
+			const list = document.querySelector('[data-lightbox-dialog]');
+			Lightbox.init(list ? {
+				dialog: list.dataset.lightboxDialog,
+				close: list.dataset.lightboxClose,
+				previous: list.dataset.lightboxPrevious,
+				next: list.dataset.lightboxNext,
+			} : {});
 		};
 
 		// on the page load and when a snippet brings the switch (e.g. the page opened by AJAX)
@@ -48,8 +61,8 @@ export default class GalleryCopy {
 			}
 
 			const icon = button.querySelector('i');
-			icon.className = 'fa-solid fa-check';
-			setTimeout(() => icon.className = 'fa-regular fa-copy', 1500);
+			icon.className = 'bi bi-check-lg';
+			setTimeout(() => icon.className = 'bi bi-copy', 1500);
 		});
 	}
 }

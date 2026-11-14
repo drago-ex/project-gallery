@@ -27,10 +27,19 @@ where you adapt them. The gallery needs no database.
 
 ## Assets
 
-Register the Naja extension that copies the path or the markup of an image in `assets/admin.js`:
+The page uses three modules of [compostrap](https://github.com/compostrap/compostrap): the tiles of the images
+(`gallery`), their preview (`lightbox`) and the area to drop images on (`dropzone`).
+
+Register the Naja extension that copies the path or the markup of an image and opens the preview, and bind the
+dropzone, in `assets/admin.js`; the dropzone is bound again after a redraw of a snippet (once in a project, also
+for other packages with a dropzone):
 
 ```js
 import GalleryCopy from './naja/gallery.js';
+import { DropzoneInput } from 'compostrap/dropzone';
+
+DropzoneInput.init();
+naja.snippetHandler.addEventListener('afterUpdate', (event) => DropzoneInput.init(event.detail.snippet));
 
 registerNajaExtensions(
 	// ...
@@ -38,10 +47,11 @@ registerNajaExtensions(
 );
 ```
 
-and the styles of the buttons in `assets/admin.scss`:
+and the styles in `assets/admin.scss`:
 
 ```scss
 @import 'naja/gallery';
+@import 'compostrap/src/scss/dropzone';
 ```
 
 The browser copies to the clipboard only over HTTPS and on localhost; elsewhere the text is offered in a dialog.

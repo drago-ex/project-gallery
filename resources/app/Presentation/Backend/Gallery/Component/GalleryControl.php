@@ -7,7 +7,6 @@ use Drago\Application\UI\Alert;
 use Drago\Application\UI\ExtraControl;
 use Drago\Component\Component;
 use Drago\Component\ModalHandle;
-use Drago\Component\OffcanvasHandle;
 use Drago\Permission\Access;
 use Drago\Permission\AccessCheck;
 use Nette\Application\Attributes\Requires;
@@ -18,12 +17,13 @@ use Tracy\ILogger;
 
 
 /**
- * Images of the gallery: upload, a full-size preview in the offcanvas, deleting after a confirmation in the modal
+ * Images of the gallery: upload, a full-size preview in the lightbox (a script, no signal), deleting after
+ * a confirmation in the modal
  * and copying the Texy markup of an image (assets/naja/gallery.js) for the content of articles and pages.
- * Privileges (resource Backend:Gallery): "upload" (the upload form) and "delete"; the preview needs only the page.
+ * Privileges (resource Backend:Gallery): "upload" (the upload form) and "delete".
  * @property-read GalleryTemplate $template
  */
-class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandle
+class GalleryControl extends ExtraControl implements ModalHandle
 {
 	use Component;
 	use AccessCheck;
@@ -34,7 +34,6 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 	/** Most images uploaded at once. */
 	private const int MaxImages = 20;
 
-	private ?string $preview = null;
 	private ?string $deleteName = null;
 	private string $snippetMessage = 'message';
 
@@ -50,11 +49,9 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 	{
 		$template = $this->template;
 		$template->setTranslator($this->translator);
-		$template->offcanvasId = $this->getUniqueIdComponent(self::Offcanvas);
 		$template->modalId = $this->getUniqueIdComponent(self::Modal);
 		$template->path = $this->getPresenter()->getHttpRequest()->getUrl()->getBasePath() . GalleryImages::Path;
 		$template->images = $this->galleryImages->getNames();
-		$template->preview = $this->preview;
 		$template->deleteName = $this->deleteName;
 		$template->setFile(__DIR__ . '/Gallery.latte');
 		$template->render();
@@ -68,29 +65,6 @@ class GalleryControl extends ExtraControl implements OffcanvasHandle, ModalHandl
 	{
 		$this->modalComponent(self::Modal);
 		$this->redrawControl('content');
-	}
-
-
-	/** Only opens the offcanvas, the page is enough. */
-	#[Access]
-	#[Requires(ajax: true)]
-	public function handleOpenOffcanvas(): void
-	{
-		$this->offCanvasComponent(self::Offcanvas);
-	}
-
-
-	/** Shows the image in its full size in the offcanvas; it only reads, the page is enough. */
-	#[Access]
-	#[Requires(ajax: true)]
-	public function handlePreview(string $name): void
-	{
-		if (!$this->galleryImages->exists($name)) {
-			$this->error();
-		}
-
-		$this->preview = $name;
-		$this->handleOpenOffcanvas();
 	}
 
 

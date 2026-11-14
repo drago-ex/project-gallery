@@ -20,9 +20,18 @@ Texy markup. The workspace rules are in `../AGENTS.md`; dependencies are in `com
 - `TexyFormatter` of drago-ex/texy-toolbar filters only URLs with a scheme, so the relative
   `[* /upload/gallery/x.jpg *]` passes.
 - `GalleryControl` (one control, no datagrid, no `BaseControl`): the upload form (`addMultiUpload`, at most 20
-  images, 8 MB, `GalleryImages::MaxPixels`, AJAX), the grid (snippet `images`), `preview!` in the full-screen
-  offcanvas, `delete!` opens the confirmation modal whose form posts the name. The buttons over an image show on
-  hover or focus, always on touch screens.
+  images, 8 MB, `GalleryImages::MaxPixels`, AJAX), the grid (snippet `images`), `delete!` opens the confirmation
+  modal whose form posts the name. The preview is the lightbox of compostrap (links with `data-lightbox`, a script,
+  no signal); its translated labels are data attributes of the list.
+- The upload is a dropzone of compostrap (`label.dropzone`, the `images` input as `dropzone-input` with
+  `data-dropzone-submit`): the file input covers the area and stays the field of the Nette form, and the form is
+  sent as soon as files are chosen or dropped, so its submit button is not rendered (the control keeps it). The
+  snippet `upload` is redrawn after every upload, so `DropzoneInput.init()` runs again after a snippet update
+  (`admin.js`). A validation message shows under the area.
+- The images are the tiles of the compostrap module `gallery` (`gallery-item`, `gallery-caption` with the name and
+  the extension, `gallery-actions` with `btn-icon` buttons and CSS tooltips); the package has no styles of its own,
+  `naja/gallery.scss` only imports `gallery` and `lightbox`. A constant in the template needs a leading backslash
+  (`PATHINFO_FILENAME`), Latte warns otherwise.
 - `GalleryCopy` has one click listener on the document (snippets need no re-init) and copies `data-gallery-copy`
   or `[* path *]` by the checked `gallery-copy-mode` radio (stored in localStorage in try/catch), with a
   `prompt()` fallback outside HTTPS/localhost.
@@ -31,7 +40,7 @@ Texy markup. The workspace rules are in `../AGENTS.md`; dependencies are in `com
 ## Permissions
 `GalleryControl` uses `AccessCheck`. Privileges of `Backend:Gallery`: `default`; `upload` (the `upload` form,
 snippet `upload` rendered only with `isAllowed('upload')`); `delete` (`handleDelete` and the `delete` form).
-`openModal`, `openOffcanvas`, `preview` need only the page (`#[Access]`). project-permission reads the privileges
+`openModal` needs only the page (`#[Access]`). project-permission reads the privileges
 from the code.
 
 ## Commands

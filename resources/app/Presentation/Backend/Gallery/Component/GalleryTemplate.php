@@ -7,7 +7,6 @@ use Drago\Application\UI\ExtraTemplate;
 
 class GalleryTemplate extends ExtraTemplate
 {
-	public string $offcanvasId;
 	public string $modalId;
 
 	/** Web path of the images, with the base path. */
@@ -15,6 +14,5 @@ class GalleryTemplate extends ExtraTemplate
 
 	/** @var list<string> */
 	public array $images = [];
-	public ?string $preview = null;
 	public ?string $deleteName = null;
 }
