@@ -4,6 +4,7 @@ namespace App\Presentation\Backend\Gallery;
 
 use App\Presentation\Backend\BackendPresenter;
 use App\Presentation\Backend\Gallery\Component\GalleryControl;
+use Throwable;
 
 
 class GalleryPresenter extends BackendPresenter
@@ -15,6 +16,7 @@ class GalleryPresenter extends BackendPresenter
 	}
 
 
+	/** @throws Throwable */
 	protected function createComponentGallery(): GalleryControl
 	{
 		$control = $this->galleryControl;
