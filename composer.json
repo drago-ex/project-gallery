@@ -16,12 +16,12 @@
 		"drago-ex/form": "^3.0",
 		"drago-ex/project-auth": "^1.0 || ^2.0",
 		"drago-ex/project-backend": "^1.0",
+		"drago-ex/project-backend-ui": "^1.0",
 		"drago-ex/translator": "^4.0.1",
 		"drago-ex/permission": "^2.0"
 	},
 	"suggest": {
-		"drago-ex/project-permission": "Administration of custom roles and their privileges.",
-		"drago-ex/project-backend-ui": "Administration layout; the gallery uses its content widget and gets its menu item from Backend/Gallery/7.menu.neon."
+		"drago-ex/project-permission": "Administration of custom roles and their privileges."
 	},
 	"require-dev": {
 		"nette/tester": "^2.5",
