@@ -13,7 +13,7 @@ Texy markup. The workspace rules are in `../AGENTS.md`; dependencies are in `com
 
 ## How it works
 - Files only, no table and no migration. `GalleryImages` lists `www/upload/gallery/` (jpg, jpeg, png, gif, webp;
-  newest first), saves an upload resized to fit 1920 × 1920 (format kept, name by `Strings::webalize()`,
+  newest first), saves an upload resized to fit 1920 × 1920 (format kept, a JPEG gets `.jpg` although `getSuggestedExtension()` says `jpeg`; name by `Strings::webalize()`,
   `-2`, `-3`… when taken) and deletes only a name `getNames()` lists, so a path in the name never reaches another
   file. Registered in `conf.neon` with `%appDir%/../www`. Resaving through GD drops GIF animation.
 - The cover image of an article is not part of the gallery: project-blog has its own `ArticleImages`.

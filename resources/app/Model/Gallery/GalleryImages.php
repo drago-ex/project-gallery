@@ -74,7 +74,9 @@ readonly class GalleryImages
 		$image->resize(self::MaxSize, self::MaxSize, Image::ShrinkOnly);
 
 		FileSystem::createDir($this->getDir());
-		$name = $this->createName($upload->getUntrustedName(), $upload->getSuggestedExtension() ?? 'jpg');
+		// the suggested extension of a JPEG is "jpeg"; the readable names keep the usual "jpg"
+		$extension = $upload->getSuggestedExtension() ?? 'jpg';
+		$name = $this->createName($upload->getUntrustedName(), $extension === 'jpeg' ? 'jpg' : $extension);
 		$image->save($this->getDir() . '/' . $name);
 		return $name;
 	}

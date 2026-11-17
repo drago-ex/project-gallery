@@ -23,7 +23,8 @@ composer require drago-ex/project-gallery
 ```
 
 [Project Tools](https://github.com/drago-ex/project-tools) copies the files of the package into the project,
-where you adapt them. The gallery needs no database.
+where you adapt them. Add its scripts and styles as [Assets](#assets) shows and build the assets again
+(`npm run vite:build`). The gallery needs no database.
 
 ## Assets
 
